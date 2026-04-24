@@ -42,7 +42,7 @@ class _InterestsScreenState extends State<InterestsScreen> {
       'fast': 'fastfood.png',
       'fast_food': 'fastfood.png', // Matches fastfood.png
       'vegan': 'vegan.png',
-      'vegan_eats': 'vegan.png',
+      'vegan_eats': 'vegan.png', //testing
       'halal': 'halal.png',
       'halal_food': 'halal.png', // Matches halal.png
       'grocery': 'grocery.png',
