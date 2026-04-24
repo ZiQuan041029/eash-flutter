@@ -9,7 +9,15 @@ abstract final class EashColors {
   static const Color disabledButton = Color(0xFF3A3A3C);
   static const Color welcomePink = Color(0xFFFF2D92);
   static const Color gradientBlue = Color(0xFF2948FF);
-  static const Color gradientMagenta = Color(0xFFE841FF);
+
+  /// Login header gradient (Welcome Back card).
+  static const Color loginMagentaDark = Color(0xFFFF4BFA);
+  static const Color loginMagentaLight = Color(0xFFFFB6FE);
+
+  /// Primary brand magenta used across gradients.
+  static const Color gradientMagenta = loginMagentaDark;
+  static const Color gradientMagentaLight = loginMagentaLight;
+  static const Color gradientMagentaDark = loginMagentaDark;
   static const Color landingPink = Color(0xFFFF3CAC);
   static const Color landingPurple = Color(0xFF2B1054);
   static const Color limeHello = Color(0xFFB8FF2A);
