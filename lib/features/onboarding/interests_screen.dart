@@ -14,7 +14,6 @@ class InterestsScreen extends StatefulWidget {
 
 class _InterestsScreenState extends State<InterestsScreen> {
   final Set<String> _selected = <String>{};
-
   static const int _min = 3;
 
   void _toggle(String id) {
@@ -25,6 +24,78 @@ class _InterestsScreenState extends State<InterestsScreen> {
         _selected.add(id);
       }
     });
+  }
+
+  String _getAssetPath(String id) {
+    final Map<String, String> assetMap = {
+      'cycling': 'cycle.png',
+      // Support both legacy ids (from `mock_data.dart`) and newer ids.
+      'pickle': 'pickle.png',
+      'pickle_paddle': 'pickle.png',
+      'gym': 'gym.png',
+      'gym_fitness': 'gym.png',
+      'football': 'football.png',
+      'coffee': 'coffee.png',
+      'coffee_tea': 'coffee.png', // Matches coffee.png in your folder
+      'street': 'streetfood.png',
+      'street_food': 'streetfood.png', // Matches streetfood.png
+      'fast': 'fastfood.png',
+      'fast_food': 'fastfood.png', // Matches fastfood.png
+      'vegan': 'vegan.png',
+      'vegan_eats': 'vegan.png',
+      'halal': 'halal.png',
+      'halal_food': 'halal.png', // Matches halal.png
+      'grocery': 'grocery.png',
+      'music': 'music.png',
+      'games': 'game.png',
+      'video_games': 'game.png',
+      'travel': 'travel.png',
+      'traveling': 'travel.png',
+      'fashion': 'fashion.png',
+      'culture': 'culture.png',
+    };
+
+    final fileName = assetMap[id] ?? '$id.png';
+    return 'assets/images/$fileName';
+  }
+
+  Widget _interestChip(InterestTag tag) {
+    return _InterestChip(
+      tag: tag,
+      assetPath: _getAssetPath(tag.id),
+      selected: _selected.contains(tag.id),
+      onTap: () => _toggle(tag.id),
+    );
+  }
+
+  /// Prototype: "Vibe & Lifestyle" is 2 + 2 + 1 rows (not 3 + 2 from [Wrap]).
+  Widget _buildTagLayout(InterestCategory cat) {
+    const double gap = 8;
+    if (cat.title == 'Vibe & Lifestyle') {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          for (int i = 0; i < cat.tags.length; i += 2) ...<Widget>[
+            if (i > 0) const SizedBox(height: gap),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                _interestChip(cat.tags[i]),
+                if (i + 1 < cat.tags.length) ...<Widget>[
+                  const SizedBox(width: gap),
+                  _interestChip(cat.tags[i + 1]),
+                ],
+              ],
+            ),
+          ],
+        ],
+      );
+    }
+    return Wrap(
+      spacing: gap,
+      runSpacing: gap,
+      children: cat.tags.map(_interestChip).toList(),
+    );
   }
 
   @override
@@ -49,7 +120,9 @@ class _InterestsScreenState extends State<InterestsScreen> {
                   const Spacer(),
                   Text(
                     'Step 1 of 3',
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(color: EashColors.mutedText),
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: EashColors.mutedText,
+                    ),
                   ),
                 ],
               ),
@@ -63,10 +136,30 @@ class _InterestsScreenState extends State<InterestsScreen> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        const CircleAvatar(
-                          radius: 28,
-                          backgroundColor: Color(0xFF3A2F55),
-                          child: Text('🧑‍🎓', style: TextStyle(fontSize: 28)),
+                        Container(
+                          width: 56,
+                          height: 56,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: EashGradients.primary,
+                          ),
+                          padding: const EdgeInsets.all(2),
+                          child: DecoratedBox(
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: EashColors.black,
+                            ),
+                            child: Center(
+                              child: ClipOval(
+                                child: Image.asset(
+                                  'assets/images/kai.png', // Your avatar
+                                  width: 42,
+                                  height: 42,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -78,33 +171,49 @@ class _InterestsScreenState extends State<InterestsScreen> {
                                 decoration: BoxDecoration(
                                   color: EashColors.white,
                                   borderRadius: BorderRadius.circular(16),
+                                  boxShadow: <BoxShadow>[
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.25),
+                                      blurRadius: 18,
+                                      offset: const Offset(0, 10),
+                                    ),
+                                  ],
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Text(
                                       'What are you into?',
-                                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                            color: EashColors.black,
-                                            fontWeight: FontWeight.w800,
-                                          ),
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.titleMedium?.copyWith(
+                                        color: EashColors.black,
+                                        fontWeight: FontWeight.w800,
+                                      ),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
                                       'Pick at least 3!',
-                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                            color: EashColors.mutedText,
-                                          ),
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodySmall?.copyWith(
+                                        color: EashColors.mutedText,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
                               const SizedBox(height: 6),
                               Text(
-                                '$kAssistantName • Just now',
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: EashColors.mutedText,
-                                    ),
+                                'KAI • Just now',
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.bodySmall?.copyWith(
+                                  color: EashColors.mutedText,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ],
                           ),
@@ -112,27 +221,17 @@ class _InterestsScreenState extends State<InterestsScreen> {
                       ],
                     ),
                     const SizedBox(height: 24),
-                    for (final InterestCategory cat in kInterestCategories) ...<Widget>[
+                    for (final InterestCategory cat
+                        in kInterestCategories) ...<Widget>[
                       Text(
                         cat.title,
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w800,
-                            ),
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                        ),
                       ),
                       const SizedBox(height: 10),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: cat.tags
-                            .map(
-                              (InterestTag t) => _InterestChip(
-                                tag: t,
-                                selected: _selected.contains(t.id),
-                                onTap: () => _toggle(t.id),
-                              ),
-                            )
-                            .toList(),
-                      ),
+                      _buildTagLayout(cat),
                       const SizedBox(height: 20),
                     ],
                   ],
@@ -145,15 +244,16 @@ class _InterestsScreenState extends State<InterestsScreen> {
               child: EashGradientButton(
                 label: 'Continue ($count/3 Selected)',
                 enabled: ready,
-                onPressed: ready
-                    ? () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => const VisaVerificationScreen(),
-                          ),
-                        );
-                      }
-                    : null,
+                onPressed:
+                    ready
+                        ? () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => const VisaVerificationScreen(),
+                            ),
+                          );
+                        }
+                        : null,
               ),
             ),
           ],
@@ -166,11 +266,13 @@ class _InterestsScreenState extends State<InterestsScreen> {
 class _InterestChip extends StatelessWidget {
   const _InterestChip({
     required this.tag,
+    required this.assetPath,
     required this.selected,
     required this.onTap,
   });
 
   final InterestTag tag;
+  final String assetPath;
   final bool selected;
   final VoidCallback onTap;
 
@@ -184,26 +286,45 @@ class _InterestChip extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           decoration: BoxDecoration(
-            gradient: selected ? EashGradients.primary : EashGradients.primary,
+            gradient: selected ? EashGradients.primary : null,
+            color: selected ? null : Colors.transparent,
+            border:
+                selected
+                    ? null
+                    : Border.all(
+                      color: Colors.white.withOpacity(0.22),
+                      width: 1.25,
+                    ),
             borderRadius: BorderRadius.circular(999),
           ),
-          padding: selected ? EdgeInsets.zero : const EdgeInsets.all(1.5),
+          padding: const EdgeInsets.all(1.5),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
             decoration: BoxDecoration(
               gradient: selected ? EashGradients.primary : null,
-              color: selected ? null : EashColors.white,
+              color: selected ? null : Colors.white,
               borderRadius: BorderRadius.circular(999),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text(tag.emoji, style: const TextStyle(fontSize: 16)),
-                const SizedBox(width: 6),
+                Image.asset(
+                  assetPath,
+                  width: 18,
+                  height: 18,
+                  fit: BoxFit.contain,
+                  errorBuilder:
+                      (context, error, stackTrace) => const Icon(
+                        Icons.image_not_supported,
+                        size: 18,
+                        color: Colors.grey,
+                      ),
+                ),
+                const SizedBox(width: 8),
                 Text(
                   tag.label,
                   style: TextStyle(
-                    color: selected ? EashColors.white : EashColors.black,
+                    color: selected ? Colors.white : Colors.black,
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
                   ),
