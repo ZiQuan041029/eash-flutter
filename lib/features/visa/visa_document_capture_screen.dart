@@ -5,104 +5,149 @@ import 'package:flutter/material.dart';
 import '../../core/theme/eash_theme.dart';
 import '../../data/mock_data.dart';
 import 'visa_confirmation_screen.dart';
+import 'visa_document_frame_layout.dart';
 
+/// Two-part layout: **upper** = wood + uniform light dim (including inside frame) + dashed border;
+/// **line** separator; **lower** = solid black dock + shutter centered in dock only.
 class VisaDocumentCaptureScreen extends StatelessWidget {
   const VisaDocumentCaptureScreen({super.key});
 
-  static const LinearGradient _wood = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    colors: <Color>[
-      Color(0xFF1A1410),
-      Color(0xFF0D0B09),
-    ],
-  );
+  static const String _kBackgroundAsset = 'assets/images/background_visa.png';
+  static const String _kShutterIconAsset = 'assets/images/camera_visa.png';
+
+  static const double _kShutterDiameter = 84;
+  static const double _kBlackBarCoreHeight = 120;
+
+  static const double _kFrameInnerPadding = 10;
+  static const double _kFrameInnerRadius = 12;
+
+  /// Uniform dim over the **whole** upper area (frame included).
+  static const double _kUpperDimAlpha = 0.56;
 
   @override
   Widget build(BuildContext context) {
+    final double bottomInset = MediaQuery.viewPaddingOf(context).bottom;
+
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(gradient: _wood),
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Row(
-                  children: <Widget>[
-                    const Spacer(),
-                    IconButton(
-                      icon: const Icon(Icons.close, color: EashColors.white),
-                      onPressed: () => Navigator.of(context).maybePop(),
-                    ),
-                  ],
+      backgroundColor: Colors.black,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                Positioned.fill(
+                  child: Image.asset(
+                    _kBackgroundAsset,
+                    fit: BoxFit.cover,
+                    filterQuality: FilterQuality.high,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Verify Your Visa',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.w800,
-                          ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      kAlignVisaHint,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: EashColors.mutedText,
-                          ),
-                    ),
-                  ],
+                Positioned.fill(
+                  child: ColoredBox(
+                    color: Colors.black.withValues(alpha: _kUpperDimAlpha),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: CustomPaint(
-                    painter: _DashedBorderPainter(
-                      color: EashColors.white.withValues(alpha: 0.85),
-                      strokeWidth: 2,
-                      radius: 16,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Container(
-                          color: const Color(0xFF2A2420),
-                          alignment: Alignment.center,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Row(
                             children: <Widget>[
-                              const Text('🪪', style: TextStyle(fontSize: 48)),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Student Pass (sample)',
-                                style: Theme.of(context).textTheme.titleSmall,
+                              const Spacer(),
+                              IconButton(
+                                icon: const Icon(Icons.close, color: EashColors.white),
+                                onPressed: () => Navigator.of(context).maybePop(),
                               ),
-                              const SizedBox(height: 4),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
                               Text(
-                                'Mock alignment preview',
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                'Verify Your Visa',
+                                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                kAlignVisaHint,
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                       color: EashColors.mutedText,
+                                      fontSize: 17,
+                                      height: 1.45,
                                     ),
                               ),
                             ],
                           ),
                         ),
+                        const SizedBox(height: 18),
+                        Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: VisaDocumentFrameLayout.captureHorizontalPadding,
+                          ),
+                          child: LayoutBuilder(
+                            builder: (BuildContext context, BoxConstraints c) {
+                              final Size frame = VisaDocumentFrameLayout.sizeWithin(
+                                maxWidth: c.maxWidth,
+                                maxHeight: c.maxHeight,
+                              );
+                              return Align(
+                                alignment: const Alignment(0, -0.35),
+                                child: SizedBox(
+                                  width: frame.width,
+                                  height: frame.height,
+                                  child: CustomPaint(
+                                    painter: _DashedBorderPainter(
+                                      color: EashColors.white.withValues(alpha: 0.85),
+                                      strokeWidth: 2,
+                                      radius: 16,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(_kFrameInnerPadding),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(_kFrameInnerRadius),
+                                        child: const SizedBox.expand(),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                       ),
+                      ],
                     ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 28),
+              ],
+            ),
+          ),
+          // White separator between upper camera stage and black dock.
+          const SizedBox(
+            height: 1,
+            child: ColoredBox(color: Colors.white),
+          ),
+          SafeArea(
+            top: false,
+            child: ColoredBox(
+              color: Colors.black,
+              child: SizedBox(
+                height: _kBlackBarCoreHeight + bottomInset,
+                width: double.infinity,
                 child: Center(
                   child: Material(
                     color: Colors.transparent,
@@ -116,25 +161,29 @@ class VisaDocumentCaptureScreen extends StatelessWidget {
                         );
                       },
                       child: Ink(
-                        width: 84,
-                        height: 84,
+                        width: _kShutterDiameter,
+                        height: _kShutterDiameter,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           gradient: EashGradients.primary,
                         ),
-                        child: const Icon(
-                          Icons.photo_camera,
-                          color: EashColors.white,
-                          size: 36,
+                        child: Center(
+                          child: Image.asset(
+                            _kShutterIconAsset,
+                            width: 38,
+                            height: 38,
+                            fit: BoxFit.contain,
+                            filterQuality: FilterQuality.high,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -184,8 +233,6 @@ class _DashedBorderPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _DashedBorderPainter oldDelegate) {
-    return oldDelegate.color != color ||
-        oldDelegate.strokeWidth != strokeWidth ||
-        oldDelegate.radius != radius;
+    return oldDelegate.color != color || oldDelegate.strokeWidth != strokeWidth || oldDelegate.radius != radius;
   }
 }
