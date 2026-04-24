@@ -27,7 +27,7 @@ class _InterestsScreenState extends State<InterestsScreen> {
   }
 
   String _getAssetPath(String id) {
-    final Map<String, String> assetMap = {
+    final Map<String, String> assetMap = { 
       'cycling': 'cycle.png',
       // Support both legacy ids (from `mock_data.dart`) and newer ids.
       'pickle': 'pickle.png',
