@@ -11,6 +11,13 @@ class VisaVerificationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double viewportH = MediaQuery.of(context).size.height;
+    final bool shortScreen = viewportH < 720;
+    final double cardH =
+        (shortScreen ? viewportH * 0.52 : 550.0).clamp(220.0, 550.0);
+    final double gapBelowCard = shortScreen ? 16.0 : 22.0;
+    final double bottomBlockPadding = shortScreen ? 12.0 : 18.0;
+
     return Scaffold(
       backgroundColor: EashColors.black,
       body: SafeArea(
@@ -50,7 +57,7 @@ class VisaVerificationScreen extends StatelessWidget {
                   filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                   child: SizedBox(
                     // Give the card an explicit height so it can't collapse.
-                    height: 550,
+                    height: cardH,
                     child: Container(
                       clipBehavior: Clip.antiAlias,
                       decoration: BoxDecoration(
@@ -98,7 +105,8 @@ class VisaVerificationScreen extends StatelessWidget {
                                             color: EashColors.white,
                                             errorBuilder:
                                                 (_, _, _) => Icon(
-                                                  Icons.insert_drive_file_outlined,
+                                                  Icons
+                                                      .insert_drive_file_outlined,
                                                   size: 48,
                                                   color: EashColors.white
                                                       .withOpacity(0.9),
@@ -130,7 +138,7 @@ class VisaVerificationScreen extends StatelessWidget {
                                     );
                                   },
                                   child: SizedBox(
-                                    width: 300,
+                                    width: double.infinity,
                                     height: 52,
                                     child: DecoratedBox(
                                       decoration: BoxDecoration(
@@ -180,60 +188,70 @@ class VisaVerificationScreen extends StatelessWidget {
               ),
             ),
 
-            // Small gap between card and title (avoid large dead space).
-            const SizedBox(height: 16),
+            // Controlled gap under the card.
+            SizedBox(height: gapBelowCard),
 
-            // 3. TEXT DESCRIPTION SECTION (Padded)
+            // Eat remaining height so the bottom block sits lower consistently.
+            const Spacer(),
+
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
+              padding: EdgeInsets.only(bottom: bottomBlockPadding),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    'Verify Your Student Visa',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: EashColors.white,
-                      fontWeight: FontWeight.w700,
+                  // 3. TEXT DESCRIPTION SECTION (Padded)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Verify Your Student Visa',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                color: EashColors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          kVisaInstruction,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: EashColors.white.withOpacity(0.6),
+                            fontSize: 15,
+                            height: 1.5,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    kVisaInstruction,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: EashColors.white.withOpacity(0.6),
-                      fontSize: 15,
-                      height: 1.5,
+
+                  const SizedBox(height: 18),
+
+                  // 4. DISABLED "NEXT" BUTTON (Padded)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Container(
+                      width: double.infinity,
+                      height: 56,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: EashColors.white.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        'Next',
+                        style: TextStyle(
+                          color: EashColors.white.withOpacity(0.3),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-
-            const SizedBox(height: 24),
-
-            // 4. DISABLED "NEXT" BUTTON (Padded)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Container(
-                width: double.infinity,
-                height: 56,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: EashColors.white.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
-                  'Next',
-                  style: TextStyle(
-                    color: EashColors.white.withOpacity(0.3),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
           ],
         ),
       ),
