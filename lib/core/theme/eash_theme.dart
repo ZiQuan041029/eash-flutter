@@ -15,9 +15,7 @@ abstract final class EashColors {
   static const Color loginMagentaLight = Color(0xFFFFB6FE);
 
   /// Primary brand magenta used across gradients.
-  static const Color gradientMagenta = loginMagentaDark;
-  static const Color gradientMagentaLight = loginMagentaLight;
-  static const Color gradientMagentaDark = loginMagentaDark;
+  static const Color brandMagenta = loginMagentaDark;
   static const Color landingPink = Color(0xFFFF3CAC);
   static const Color landingPurple = Color(0xFF2B1054);
   static const Color limeHello = Color(0xFFB8FF2A);
@@ -29,7 +27,7 @@ abstract final class EashGradients {
   static const LinearGradient primary = LinearGradient(
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
-    colors: <Color>[EashColors.gradientBlue, EashColors.gradientMagenta],
+    colors: <Color>[EashColors.gradientBlue, EashColors.brandMagenta],
   );
 
   static const LinearGradient landing = LinearGradient(
@@ -47,7 +45,7 @@ ThemeData buildEashTheme() {
     scaffoldBackgroundColor: EashColors.black,
     colorScheme: const ColorScheme.dark(
       primary: EashColors.gradientBlue,
-      secondary: EashColors.gradientMagenta,
+      secondary: EashColors.brandMagenta,
       surface: EashColors.cardGrey,
     ),
     appBarTheme: const AppBarTheme(

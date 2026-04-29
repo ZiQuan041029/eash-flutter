@@ -74,7 +74,7 @@ class CameraPermissionScreen extends StatelessWidget {
                                 (_, _, _) => const Icon(
                                   Icons.photo_camera_outlined,
                                   size: 72,
-                                  color: EashColors.gradientMagentaDark,
+                                  color: EashColors.loginMagentaDark,
                                 ),
                           ),
                         ),

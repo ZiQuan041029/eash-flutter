@@ -32,8 +32,8 @@ class LoginScreen extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      EashColors.gradientMagentaDark,
-                      EashColors.gradientMagentaLight, // Bottom color (#FF4BFA)
+                      EashColors.loginMagentaDark,
+                      EashColors.loginMagentaLight,
                     ],
                     // Remove the stops or set them to [0.0, 1.0] for a smooth blend
                     stops: const [0.0, 1.0],
