@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/eash_theme.dart';
 import '../../data/mock_data.dart';
+import '../../widgets/eash_exit_icon_button.dart';
 import '../../widgets/eash_gradient_button.dart';
 import '../visa/visa_verification_screen.dart';
 
@@ -27,7 +28,7 @@ class _InterestsScreenState extends State<InterestsScreen> {
   }
 
   String _getAssetPath(String id) {
-    final Map<String, String> assetMap = { 
+    final Map<String, String> assetMap = {
       'cycling': 'cycle.png',
       // Support both legacy ids (from `mock_data.dart`) and newer ids.
       'pickle': 'pickle.png',
@@ -70,7 +71,7 @@ class _InterestsScreenState extends State<InterestsScreen> {
 
   /// Prototype: "Vibe & Lifestyle" is 2 + 2 + 1 rows (not 3 + 2 from [Wrap]).
   Widget _buildTagLayout(InterestCategory cat) {
-    const double gap = 8;
+    const double gap = 9;
     if (cat.title == 'Vibe & Lifestyle') {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,8 +114,7 @@ class _InterestsScreenState extends State<InterestsScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Row(
                 children: <Widget>[
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: EashColors.white),
+                  EashExitIconButton(
                     onPressed: () => Navigator.of(context).maybePop(),
                   ),
                   const Spacer(),
@@ -129,36 +129,19 @@ class _InterestsScreenState extends State<InterestsScreen> {
             ),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 40),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Container(
-                          width: 56,
-                          height: 56,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: EashGradients.primary,
-                          ),
-                          padding: const EdgeInsets.all(2),
-                          child: DecoratedBox(
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: EashColors.black,
-                            ),
-                            child: Center(
-                              child: ClipOval(
-                                child: Image.asset(
-                                  'assets/images/kai.png', // Your avatar
-                                  width: 42,
-                                  height: 42,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
+                        ClipOval(
+                          child: Image.asset(
+                            'assets/images/kai.png',
+                            width: 56,
+                            height: 56,
+                            fit: BoxFit.cover,
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -220,7 +203,7 @@ class _InterestsScreenState extends State<InterestsScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 50),
                     for (final InterestCategory cat
                         in kInterestCategories) ...<Widget>[
                       Text(
@@ -238,12 +221,19 @@ class _InterestsScreenState extends State<InterestsScreen> {
                 ),
               ),
             ),
-            const Divider(height: 1, color: Color(0xFF2C2C2E)),
+            Container(
+              width: 1,
+              height: 1,
+              color: const Color(0xFFE5E5E5),
+            ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 12, 24, 20),
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 10),
               child: EashGradientButton(
-                label: 'Continue ($count/3 Selected)',
+                label: 'Continue ($count Selected)',
                 enabled: ready,
+                // Inner should be blue → pink, outer ring pink → blue.
+                fillGradient: EashGradients.primary,
+                contourGradient: EashContour.rimContinueCta,
                 onPressed:
                     ready
                         ? () {
@@ -271,6 +261,14 @@ class _InterestChip extends StatelessWidget {
     required this.onTap,
   });
 
+  static const double _chipBorder = 1.5;
+  static const double _iconSize = 20;
+  static const double _fontSize = 13.5;
+  static const EdgeInsets _innerPadding = EdgeInsets.symmetric(
+    horizontal: 14,
+    vertical: 9,
+  );
+
   final InterestTag tag;
   final String assetPath;
   final bool selected;
@@ -278,31 +276,23 @@ class _InterestChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
+    return Container(
+      decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(999),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          decoration: BoxDecoration(
-            gradient: selected ? EashGradients.primary : null,
-            color: selected ? null : Colors.transparent,
-            border:
-                selected
-                    ? null
-                    : Border.all(
-                      color: Colors.white.withOpacity(0.22),
-                      width: 1.25,
-                    ),
-            borderRadius: BorderRadius.circular(999),
-          ),
-          padding: const EdgeInsets.all(1.5),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        gradient: EashContour.rimInterestChip,
+      ),
+      padding: const EdgeInsets.all(_chipBorder),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(999),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            padding: _innerPadding,
             decoration: BoxDecoration(
               gradient: selected ? EashGradients.primary : null,
-              color: selected ? null : Colors.white,
+              color: selected ? null : EashColors.white,
               borderRadius: BorderRadius.circular(999),
             ),
             child: Row(
@@ -310,13 +300,13 @@ class _InterestChip extends StatelessWidget {
               children: <Widget>[
                 Image.asset(
                   assetPath,
-                  width: 18,
-                  height: 18,
+                  width: _iconSize,
+                  height: _iconSize,
                   fit: BoxFit.contain,
                   errorBuilder:
-                      (context, error, stackTrace) => const Icon(
+                      (context, error, stackTrace) => Icon(
                         Icons.image_not_supported,
-                        size: 18,
+                        size: _iconSize,
                         color: Colors.grey,
                       ),
                 ),
@@ -324,9 +314,9 @@ class _InterestChip extends StatelessWidget {
                 Text(
                   tag.label,
                   style: TextStyle(
-                    color: selected ? Colors.white : Colors.black,
+                    color: selected ? EashColors.white : EashColors.black,
                     fontWeight: FontWeight.w600,
-                    fontSize: 13,
+                    fontSize: _fontSize,
                   ),
                 ),
               ],

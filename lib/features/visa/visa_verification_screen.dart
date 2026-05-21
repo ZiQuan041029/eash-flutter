@@ -1,7 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../../core/permissions/visa_camera_gate.dart';
 import '../../core/theme/eash_theme.dart';
-import 'camera_permission_screen.dart';
+import '../../widgets/eash_exit_icon_button.dart';
+import '../../widgets/eash_gradient_button.dart';
 
 class VisaVerificationScreen extends StatelessWidget {
   const VisaVerificationScreen({super.key});
@@ -14,7 +16,8 @@ class VisaVerificationScreen extends StatelessWidget {
     final double viewportH = MediaQuery.of(context).size.height;
     final bool shortScreen = viewportH < 720;
     final double cardH =
-        (shortScreen ? viewportH * 0.52 : 550.0).clamp(220.0, 550.0);
+        // Slightly smaller preview card height; keep width/insets unchanged.
+        (shortScreen ? viewportH * 0.46 : 500.0).clamp(220.0, 500.0);
     final double gapBelowCard = shortScreen ? 16.0 : 22.0;
     final double bottomBlockPadding = shortScreen ? 12.0 : 18.0;
 
@@ -24,14 +27,14 @@ class VisaVerificationScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const SizedBox(height: 8),
             // 1. HEADER ROW (Padded)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: EashColors.white),
+                  EashExitIconButton(
                     onPressed: () => Navigator.of(context).maybePop(),
                   ),
                   Text(
@@ -45,8 +48,8 @@ class VisaVerificationScreen extends StatelessWidget {
               ),
             ),
 
-            // Tight gap under header so the review card sits higher (no huge empty band).
-            const SizedBox(height: 4),
+            // Slightly more top gap before the preview card.
+            const SizedBox(height: 12),
 
             // 2. THE GLASS CARD
             Padding(
@@ -83,7 +86,8 @@ class VisaVerificationScreen extends StatelessWidget {
                           ),
                           Container(color: Colors.black.withOpacity(0.22)),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(24, 20, 24, 30),
+                            // Slightly more bottom padding to lift the button.
+                            padding: const EdgeInsets.fromLTRB(34, 20, 8, 38),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -92,7 +96,7 @@ class VisaVerificationScreen extends StatelessWidget {
                                 Expanded(
                                   child: Align(
                                     // Lower in the card (above Take Photo); y toward +1 = further down.
-                                    alignment: const Alignment(0, 0.35),
+                                    alignment: const Alignment(0, 0.25),
                                     child: Padding(
                                       padding: EdgeInsets.zero,
                                       child: Column(
@@ -127,53 +131,25 @@ class VisaVerificationScreen extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder:
-                                            (_) =>
-                                                const CameraPermissionScreen(),
-                                      ),
-                                    );
-                                  },
-                                  child: SizedBox(
-                                    width: double.infinity,
+                                FractionallySizedBox(
+                                  widthFactor: 0.90,
+                                  child: EashGradientButton(
+                                    label: 'Take Photo',
                                     height: 52,
-                                    child: DecoratedBox(
-                                      decoration: BoxDecoration(
-                                        gradient: EashGradients.primary,
-                                        borderRadius: BorderRadius.circular(
-                                          999,
-                                        ),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Image.asset(
-                                            'assets/images/photo_verify.png',
-                                            width: 20,
-                                            height: 20,
+                                    fontSize: 20,
+                                    onPressed: () =>
+                                        openVisaDocumentCapture(context),
+                                    leading: Image.asset(
+                                      'assets/images/photo_verify.png',
+                                      width: 20,
+                                      height: 20,
+                                      color: EashColors.white,
+                                      errorBuilder:
+                                          (_, _, _) => const Icon(
+                                            Icons.photo_camera_outlined,
                                             color: EashColors.white,
-                                            errorBuilder:
-                                                (_, _, _) => const Icon(
-                                                  Icons.photo_camera_outlined,
-                                                  color: EashColors.white,
-                                                  size: 20,
-                                                ),
+                                            size: 20,
                                           ),
-                                          const SizedBox(width: 20),
-                                          const Text(
-                                            'Take Photo',
-                                            style: TextStyle(
-                                              color: EashColors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
                                     ),
                                   ),
                                 ),

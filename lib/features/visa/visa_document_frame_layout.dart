@@ -9,13 +9,14 @@ class VisaDocumentFrameLayout {
   /// Horizontal padding used by capture/confirmation screens.
   ///
   /// Must be `const` because it is used inside `const EdgeInsets`.
-  static const double captureHorizontalPadding = 24;
+  static const double captureHorizontalPadding = 20;
 
   /// Inner clip radius for the document preview/capture content.
   static const double innerClipRadius = 12;
 
   /// Approximate aspect ratio of an ID/visa card (width / height).
-  static const double _kDocumentAspectRatio = 1.586;
+  // Prototype frame: 353x250 => 1.412.
+  static const double _kDocumentAspectRatio = 353 / 250;
 
   /// Returns a frame size that fits within the given bounds while preserving the
   /// document aspect ratio.
@@ -51,8 +52,9 @@ class VisaDocumentFrameLayout {
   /// Used by confirmation screen to match the capture frame geometry without
   /// depending on the capture screen's internal constraints.
   static double frameMaxHeightForCaptureRoute(MediaQueryData mq) {
-    final double h = mq.size.height * 0.26;
-    return h.isFinite ? h.clamp(160.0, 320.0) : 0;
+    // Slightly larger capture frame to match prototype.
+    final double h = mq.size.height * 0.31; // iPhone-ish: ~250px tall
+    return h.isFinite ? h.clamp(220.0, 280.0) : 0;
   }
 }
 

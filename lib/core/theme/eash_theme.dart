@@ -30,11 +30,60 @@ abstract final class EashGradients {
     colors: <Color>[EashColors.gradientBlue, EashColors.brandMagenta],
   );
 
+  /// Interests screen bottom CTA: **pink (left) → blue (right)** (reversed vs [primary]).
+  static const LinearGradient continueCta = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: <Color>[EashColors.brandMagenta, EashColors.gradientBlue],
+  );
+
+  /// Profile avatar / camera outer rim: **pink (left) → blue (right)**.
+  static const LinearGradient profileRim = continueCta;
+
   static const LinearGradient landing = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: <Color>[EashColors.landingPink, EashColors.landingPurple],
   );
+}
+
+abstract final class EashContour {
+  /// Outer rim (prototype): **vertical** gradient — **pink at top**, **blue at bottom**.
+  /// Fill stays horizontal ([EashGradients.primary]: blue left → pink right), so corners read
+  /// like the reference (e.g. pink rim over blue fill top-left).
+  static const LinearGradient rimGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: <Color>[
+      EashColors.brandMagenta,
+      EashColors.gradientBlue,
+    ],
+  );
+
+  /// Interest chips (smaller pills): vertical rim **blue → pink** (inverse of [rimGradient]).
+  static const LinearGradient rimInterestChip = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: <Color>[
+      EashColors.gradientBlue,
+      EashColors.brandMagenta,
+    ],
+  );
+
+  /// Same vertical rim as [rimGradient] for interests Continue.
+  static const LinearGradient rimContinueCta = rimGradient;
+
+  static const LinearGradient rimGradientDisabled = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: <Color>[
+      Color(0xFF8E8E93),
+      Color(0xFF4A4A4E),
+    ],
+  );
+
+  /// Gap between rim and inner fill (smaller = thinner ring).
+  static const double inset = 2;
 }
 
 ThemeData buildEashTheme() {
