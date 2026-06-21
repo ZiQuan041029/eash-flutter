@@ -49,5 +49,14 @@
 	<string>EASH needs camera access to photograph your student visa for verification.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>EASH needs photo library access so you can choose a profile picture.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>EASH uses your location to show nearby restaurants and directions.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>comgooglemaps</string>
+		<string>waze</string>
+		<string>maps</string>
+		<string>google.navigation</string>
+	</array>
 </dict>
 </plist>

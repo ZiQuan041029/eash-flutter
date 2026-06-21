@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import '../../core/assets/eash_images.dart';
+import '../../core/location/location_permission_gate.dart';
 import '../../core/notifications/unread_notification_store.dart';
 import '../../core/theme/eash_theme.dart';
 import '../../widgets/eash_gradient_button.dart';
@@ -45,6 +46,25 @@ class _HomeScreenState extends State<HomeScreen> {
     UnreadNotificationStore.instance.syncHasUnread(
       NotificationsScreen.demoListHasUnread(),
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        primeUserLocation();
+      }
+    });
+    if (_tabIndex == 1) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ensureUserLocation(context);
+        }
+      });
+    }
+  }
+
+  void _onTabChanged(int index) {
+    setState(() => _tabIndex = index);
+    if (index == 1) {
+      ensureUserLocation(context);
+    }
   }
 
   Future<void> _captureProfilePhoto(BuildContext context) async {
@@ -65,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     switch (result) {
       case SearchTabResult(:final tabIndex):
-        setState(() => _tabIndex = tabIndex.clamp(0, 3));
+        _onTabChanged(tabIndex.clamp(0, 3));
       case SearchPushResult(:final screen):
         if (!context.mounted) {
           return;
@@ -93,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   minimum: const EdgeInsets.only(bottom: 2),
                   child: _BottomNav(
                     index: _tabIndex,
-                    onChanged: (int i) => setState(() => _tabIndex = i),
+                    onChanged: _onTabChanged,
                   ),
                 ),
               )

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/eash_theme.dart';
 import '../../data/food_drink_mock_data.dart';
+import '../../data/merchant_mock_data.dart';
 import '../../widgets/discover_trending_categories.dart';
 import '../food_drink/food_drink_routes.dart';
+import '../merchant/merchant_routes.dart';
 import '../../widgets/eash_gradient_header.dart';
 import '../../widgets/explore_community_card.dart';
 import '../home/widgets/home_deal_banner.dart';
@@ -91,10 +93,10 @@ class DiscoverScreen extends StatelessWidget {
               child: Text(
                 'Trending Categories',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: EashColors.white,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 17,
-                    ),
+                  color: EashColors.white,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 17,
+                ),
               ),
             ),
           ),
@@ -122,29 +124,33 @@ class DiscoverScreen extends StatelessWidget {
               child: Text(
                 'Top Picks',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: EashColors.white,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 17,
-                    ),
+                  color: EashColors.white,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 17,
+                ),
               ),
             ),
           ),
           SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                final _TopPick pick = _topPicks[index];
-                return Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    16,
-                    0,
-                    16,
-                    index == _topPicks.length - 1 ? 16 : 10,
-                  ),
-                  child: _TopPickCard(pick: pick, offerGradient: _offerBadge),
-                );
-              },
-              childCount: _topPicks.length,
-            ),
+            delegate: SliverChildBuilderDelegate((
+              BuildContext context,
+              int index,
+            ) {
+              final _TopPick pick = _topPicks[index];
+              return Padding(
+                padding: EdgeInsets.fromLTRB(
+                  16,
+                  0,
+                  16,
+                  index == _topPicks.length - 1 ? 16 : 10,
+                ),
+                child: _TopPickCard(
+                  pick: pick,
+                  offerGradient: _offerBadge,
+                  onTap: () => openMerchantDetail(context),
+                ),
+              );
+            }, childCount: _topPicks.length),
           ),
         ],
       ),
@@ -170,77 +176,83 @@ class _TopPickCard extends StatelessWidget {
   const _TopPickCard({
     required this.pick,
     required this.offerGradient,
+    this.onTap,
   });
 
   final _TopPick pick;
   final LinearGradient offerGradient;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: EashColors.white,
       borderRadius: BorderRadius.circular(10),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: EashColors.cardGrey.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                Icons.storefront_rounded,
-                color: EashColors.black.withValues(alpha: 0.35),
-                size: 28,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    pick.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: EashColors.black,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${pick.category} · ${pick.distance}',
-                    style: TextStyle(
-                      color: EashColors.black.withValues(alpha: 0.5),
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(99),
-                gradient: offerGradient,
-              ),
-              child: Text(
-                pick.offer,
-                style: const TextStyle(
-                  color: EashColors.black,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: EashColors.cardGrey.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.storefront_rounded,
+                  color: EashColors.black.withValues(alpha: 0.35),
+                  size: 28,
                 ),
               ),
-            ),
-          ],
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      pick.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: EashColors.black,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${pick.category} · ${pick.distance}',
+                      style: TextStyle(
+                        color: EashColors.black.withValues(alpha: 0.5),
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(99),
+                  gradient: offerGradient,
+                ),
+                child: Text(
+                  pick.offer,
+                  style: const TextStyle(
+                    color: EashColors.black,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
